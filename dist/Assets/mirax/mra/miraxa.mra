@@ -1,0 +1,59 @@
+<misterromdescription>
+    <about author="RndMnkIII (Javier)" webpage="https://github.com/RndMnkIII" source="MAME misc/mirax.cpp"/>
+
+    <name>Mirax (set 2)</name>
+    <setname>miraxa</setname>
+    <rbf>mirax</rbf>
+    <mameversion>0264</mameversion>
+    <year>1985</year>
+    <manufacturer>Current Technology, Inc.</manufacturer>
+    <players>2</players>
+    <joystick>4-way</joystick>
+    <buttons count="1" default="A" names="Fire"/>
+    <region>World</region>
+    <rotation>vertical (cw)</rotation>
+    <category>Shooter</category>
+
+    <!-- Clone of 'mirax': only the 3 program ROMs are unique (miraxa.zip);
+         every shared ROM is pulled from the parent mirax.zip. Same load
+         stream / offset map as mirax.mra (total 0x32040). -->
+
+    <rom index="0" zip="miraxa.zip|mirax.zip" md5="none">
+        <!-- 0x00000 : main program (encrypted) - unique to this set -->
+        <part name="mx_p5_43v.p5" crc="87664903"/>
+        <part name="mx_r5_43v.r5" crc="1ba4cd8e"/>
+        <part name="mx_s5_43v.s5" crc="c58cc151"/>
+        <!-- 0x0C000 : audio CPU (from parent) -->
+        <part name="mxr2-4v.rom" crc="cd2d52dc"/>
+        <!-- 0x0E000 : tiles, plane 0/1/2 (from parent) -->
+        <part name="mxe3-4v.rom" crc="0cede01f"/>
+        <part name="mxh3-4v.rom" crc="58221502"/>
+        <part name="mxk3-4v.rom" crc="6dbc2961"/>
+        <!-- 0x1A000 : sprites (from parent) -->
+        <part name="mxf3-4v.rom" crc="14b1ca85"/>
+        <part name="mxe2-4v.rom" crc="2cf5d8b7"/>
+        <part name="mxi3-4v.rom" crc="20fb2099"/>
+        <part name="mxf2-4v.rom" crc="1f42c7fa"/>
+        <part name="mxl3-4v.rom" crc="918487aa"/>
+        <part name="mxh2-4v.rom" crc="cbaff4c6"/>
+        <!-- 0x32000 : color PROMs (from parent) -->
+        <part name="mra3.prm" crc="ae7e1a63"/>
+        <part name="mrb3.prm" crc="e3f3d0f5"/>
+    </rom>
+
+    <!-- DSW1 = byte0, DSW2 = byte1. Defaults: DSW1=0x00, DSW2=0x0C. -->
+    <switches default="00,0C" base="0">
+        <!-- DSW1 (0xF200) -->
+        <dip name="Coinage"       bits="0,1" ids="A 1C/1C B 6C/1C,A 1C/2C B 3C/1C,A 1C/3C B 2C/1C,A 2C/1C B 12C/1C"/>
+        <dip name="Cabinet"       bits="2"   ids="Upright,Cocktail"/>
+        <dip name="Flip Screen"   bits="3"   ids="Off,On"/>
+        <dip name="Lives"         bits="4,5" ids="3,4,5,6"/>
+        <!-- DSW2 (0xF400) -->
+        <dip name="Bonus Life"    bits="8"   ids="30k 80k 150k,50k 100k 900k"/>
+        <dip name="Extra Lives"   bits="9"   ids="5,8"/>
+        <dip name="Demo Sounds"   bits="10"  ids="Off,On"/>
+        <dip name="Allow Continue" bits="11" ids="No,Yes"/>
+        <dip name="Auto-Play Mode" bits="12" ids="No,Yes"/>
+        <dip name="Difficulty"    bits="13"  ids="Easy,Hard"/>
+    </switches>
+</misterromdescription>
