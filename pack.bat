@@ -21,7 +21,7 @@ setlocal enableextensions enabledelayedexpansion
 REM ---- Datos del core (edita si cambias autor/nombre/plataforma) -------------
 set "AUTHOR=RndMnkIII"
 set "SHORTNAME=MiraxPocket"
-set "PLATFORM=mirax"
+set "PLATFORM=Mirax"
 
 set "ROOT=%~dp0"
 if "%ROOT:~-1%"=="\" set "ROOT=%ROOT:~0,-1%"

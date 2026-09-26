@@ -1,0 +1,243 @@
+# do run_questa.do
+# ../rtl
+# +FRAMES=0 +STRIDE=1 +DIR=frames
+# ** Warning: (vdel-134) Unable to remove locked optimized design "_opt".  Locker is rndmn@MSI_VECTOR_18HX.
+# 
+# ** Warning: (vlib-34) Library already exists at "work".
+# 
+# vsim -c -voptargs="+acc" work.tb_questa "+FRAMES=0" "+STRIDE=1" "+DIR=frames" 
+# Start time: 21:37:47 on Sep 18,2026
+# ** Note: (vsim-3812) Design is being optimized...
+# 
+# ** Note: (vopt-143) Recognized 1 FSM in module "mirax_sprite_engine(fast)".
+# 
+# ** Warning: ../rtl/mirax_sound.sv(165): (vopt-2685) [TFMPC] - Too few port connections for 'u_jt49'.  Expected 19, found 16.
+# 
+# ** Warning: ../rtl/mirax_sound.sv(165): (vopt-2718) [TFMPC] - Missing connection for port 'IOB_oe'.
+# 
+# ** Warning: ../rtl/mirax_sound.sv(165): (vopt-2718) [TFMPC] - Missing connection for port 'IOA_oe'.
+# 
+# ** Warning: ../rtl/mirax_sound.sv(165): (vopt-2718) [TFMPC] - Missing connection for port 'sample'.
+# 
+# ** Note: (vopt-143) Recognized 1 FSM in module "ay_writeport(fast)".
+# 
+# //  Questa Sim-64
+# //  Version 10.4c win64 Jul 20 2015
+# //
+# //  Copyright 1991-2015 Mentor Graphics Corporation
+# //  All Rights Reserved.
+# //
+# //  THIS WORK CONTAINS TRADE SECRET AND PROPRIETARY INFORMATION
+# //  WHICH IS THE PROPERTY OF MENTOR GRAPHICS CORPORATION OR ITS
+# //  LICENSORS AND IS SUBJECT TO LICENSE TERMS.
+# //  THIS DOCUMENT CONTAINS TRADE SECRETS AND COMMERCIAL OR FINANCIAL
+# //  INFORMATION THAT ARE PRIVILEGED, CONFIDENTIAL, AND EXEMPT FROM
+# //  DISCLOSURE UNDER THE FREEDOM OF INFORMATION ACT, 5 U.S.C. SECTION 552.
+# //  FURTHERMORE, THIS INFORMATION IS PROHIBITED FROM DISCLOSURE UNDER
+# //  THE TRADE SECRETS ACT, 18 U.S.C. SECTION 1905.
+# //
+# Loading sv_std.std
+# Loading work.tb_questa(fast)
+# Loading work.mirax_top(fast)
+# Loading work.mirax_clocks(fast)
+# Loading work.rom_sp(fast)
+# Loading work.dpram(fast)
+# Loading work.dpram(fast__1)
+# Loading work.dpram(fast__2)
+# Loading work.mirax_main(fast)
+# Loading work.T80pa(fast)
+# Loading work.tv80_core(fast)
+# Loading work.tv80_mcode(fast)
+# Loading work.tv80_alu(fast)
+# Loading work.tv80_reg(fast)
+# Loading work.mirax_decrypt(fast)
+# Loading work.ttl_ls259(fast)
+# Loading work.rom_sp(fast__1)
+# Loading work.mirax_sound(fast)
+# Loading work.ay_writeport(fast)
+# Loading work.jt49_bus(fast)
+# Loading work.jt49(fast)
+# Loading work.jt49_cen(fast)
+# Loading work.jt49_div(fast)
+# Loading work.jt49_noise(fast)
+# Loading work.jt49_div(fast__1)
+# Loading work.jt49_div(fast__2)
+# Loading work.jt49_eg(fast)
+# Loading work.jt49_exp(fast)
+# Loading work.rom_planes3(fast)
+# Loading work.rom_planes3(fast__1)
+# Loading work.rom_sp(fast__2)
+# Loading work.mirax_video(fast)
+# Loading work.mirax_sprite_engine(fast)
+# [tb_questa] ROMs preloaded. DIR=frames FRAMES=0 STRIDE=1
+# [tb_questa] audio -> frames/audio.pcm @ 48000 Hz
+# [tb_questa] reset released
+# [tb_questa] frame 29 written (30 total)
+# [tb_questa] frame 59 written (60 total)
+# [tb_questa] frame 89 written (90 total)
+# [tb_questa] frame 119 written (120 total)
+# [tb_questa] frame 149 written (150 total)
+# [tb_questa] frame 179 written (180 total)
+# [tb_questa] frame 209 written (210 total)
+# [tb_questa] frame 239 written (240 total)
+# [tb_questa] frame 269 written (270 total)
+# [tb_questa] frame 299 written (300 total)
+# [tb_questa] frame 329 written (330 total)
+# [tb_questa] frame 359 written (360 total)
+# [tb_questa] frame 389 written (390 total)
+# [tb_questa] frame 419 written (420 total)
+# [tb_questa] frame 449 written (450 total)
+# [tb_questa] frame 479 written (480 total)
+# [tb_questa] frame 509 written (510 total)
+# [tb_questa] frame 539 written (540 total)
+# [tb_questa] frame 569 written (570 total)
+# [tb_questa] frame 599 written (600 total)
+# [tb_questa] frame 629 written (630 total)
+# [tb_questa] frame 659 written (660 total)
+# [tb_questa] frame 689 written (690 total)
+# [tb_questa] frame 719 written (720 total)
+# [tb_questa] frame 749 written (750 total)
+# [tb_questa] frame 779 written (780 total)
+# [tb_questa] frame 809 written (810 total)
+# [tb_questa] frame 839 written (840 total)
+# [tb_questa] frame 869 written (870 total)
+# [tb_questa] frame 899 written (900 total)
+# [tb_questa] frame 929 written (930 total)
+# [tb_questa] frame 959 written (960 total)
+# [tb_questa] frame 989 written (990 total)
+# [tb_questa] frame 1019 written (1020 total)
+# [tb_questa] frame 1049 written (1050 total)
+# [tb_questa] frame 1079 written (1080 total)
+# [tb_questa] frame 1109 written (1110 total)
+# [tb_questa] frame 1139 written (1140 total)
+# [tb_questa] frame 1169 written (1170 total)
+# [tb_questa] frame 1199 written (1200 total)
+# [tb_questa] frame 1229 written (1230 total)
+# [tb_questa] frame 1259 written (1260 total)
+# [tb_questa] frame 1289 written (1290 total)
+# [tb_questa] frame 1319 written (1320 total)
+# [tb_questa] frame 1349 written (1350 total)
+# [tb_questa] frame 1379 written (1380 total)
+# [tb_questa] frame 1409 written (1410 total)
+# [tb_questa] frame 1439 written (1440 total)
+# [tb_questa] frame 1469 written (1470 total)
+# [tb_questa] frame 1499 written (1500 total)
+# [tb_questa] frame 1529 written (1530 total)
+# [tb_questa] frame 1559 written (1560 total)
+# [tb_questa] frame 1589 written (1590 total)
+# [tb_questa] frame 1619 written (1620 total)
+# [tb_questa] frame 1649 written (1650 total)
+# [tb_questa] frame 1679 written (1680 total)
+# [tb_questa] frame 1709 written (1710 total)
+# [tb_questa] frame 1739 written (1740 total)
+# [tb_questa] frame 1769 written (1770 total)
+# [tb_questa] frame 1799 written (1800 total)
+# [tb_questa] frame 1829 written (1830 total)
+# [tb_questa] frame 1859 written (1860 total)
+# [tb_questa] frame 1889 written (1890 total)
+# [tb_questa] frame 1919 written (1920 total)
+# [tb_questa] frame 1949 written (1950 total)
+# [tb_questa] frame 1979 written (1980 total)
+# [tb_questa] frame 2009 written (2010 total)
+# [tb_questa] frame 2039 written (2040 total)
+# [tb_questa] frame 2069 written (2070 total)
+# [tb_questa] frame 2099 written (2100 total)
+# [tb_questa] frame 2129 written (2130 total)
+# [tb_questa] frame 2159 written (2160 total)
+# [tb_questa] frame 2189 written (2190 total)
+# [tb_questa] frame 2219 written (2220 total)
+# [tb_questa] frame 2249 written (2250 total)
+# [tb_questa] frame 2279 written (2280 total)
+# [tb_questa] frame 2309 written (2310 total)
+# [tb_questa] frame 2339 written (2340 total)
+# [tb_questa] frame 2369 written (2370 total)
+# [tb_questa] frame 2399 written (2400 total)
+# [tb_questa] frame 2429 written (2430 total)
+# [tb_questa] frame 2459 written (2460 total)
+# [tb_questa] frame 2489 written (2490 total)
+# [tb_questa] frame 2519 written (2520 total)
+# [tb_questa] frame 2549 written (2550 total)
+# [tb_questa] frame 2579 written (2580 total)
+# [tb_questa] frame 2609 written (2610 total)
+# [tb_questa] frame 2639 written (2640 total)
+# [tb_questa] frame 2669 written (2670 total)
+# [tb_questa] frame 2699 written (2700 total)
+# [tb_questa] frame 2729 written (2730 total)
+# [tb_questa] frame 2759 written (2760 total)
+# [tb_questa] frame 2789 written (2790 total)
+# [tb_questa] frame 2819 written (2820 total)
+# [tb_questa] frame 2849 written (2850 total)
+# [tb_questa] frame 2879 written (2880 total)
+# [tb_questa] frame 2909 written (2910 total)
+# [tb_questa] frame 2939 written (2940 total)
+# [tb_questa] frame 2969 written (2970 total)
+# [tb_questa] frame 2999 written (3000 total)
+# [tb_questa] frame 3029 written (3030 total)
+# [tb_questa] frame 3059 written (3060 total)
+# [tb_questa] frame 3089 written (3090 total)
+# [tb_questa] frame 3119 written (3120 total)
+# [tb_questa] frame 3149 written (3150 total)
+# [tb_questa] frame 3179 written (3180 total)
+# [tb_questa] frame 3209 written (3210 total)
+# [tb_questa] frame 3239 written (3240 total)
+# [tb_questa] frame 3269 written (3270 total)
+# [tb_questa] frame 3299 written (3300 total)
+# [tb_questa] frame 3329 written (3330 total)
+# [tb_questa] frame 3359 written (3360 total)
+# [tb_questa] frame 3389 written (3390 total)
+# [tb_questa] frame 3419 written (3420 total)
+# [tb_questa] frame 3449 written (3450 total)
+# [tb_questa] frame 3479 written (3480 total)
+# [tb_questa] frame 3509 written (3510 total)
+# [tb_questa] frame 3539 written (3540 total)
+# [tb_questa] frame 3569 written (3570 total)
+# [tb_questa] frame 3599 written (3600 total)
+# [tb_questa] frame 3629 written (3630 total)
+# [tb_questa] frame 3659 written (3660 total)
+# [tb_questa] frame 3689 written (3690 total)
+# [tb_questa] frame 3719 written (3720 total)
+# [tb_questa] frame 3749 written (3750 total)
+# [tb_questa] frame 3779 written (3780 total)
+# [tb_questa] frame 3809 written (3810 total)
+# [tb_questa] frame 3839 written (3840 total)
+# [tb_questa] frame 3869 written (3870 total)
+# [tb_questa] frame 3899 written (3900 total)
+# [tb_questa] frame 3929 written (3930 total)
+# [tb_questa] frame 3959 written (3960 total)
+# [tb_questa] frame 3989 written (3990 total)
+# [tb_questa] frame 4019 written (4020 total)
+# [tb_questa] frame 4049 written (4050 total)
+# [tb_questa] frame 4079 written (4080 total)
+# [tb_questa] frame 4109 written (4110 total)
+# [tb_questa] frame 4139 written (4140 total)
+# [tb_questa] frame 4169 written (4170 total)
+# [tb_questa] frame 4199 written (4200 total)
+# [tb_questa] frame 4229 written (4230 total)
+# [tb_questa] frame 4259 written (4260 total)
+# [tb_questa] frame 4289 written (4290 total)
+# [tb_questa] frame 4319 written (4320 total)
+# [tb_questa] frame 4349 written (4350 total)
+# [tb_questa] frame 4379 written (4380 total)
+# [tb_questa] frame 4409 written (4410 total)
+# [tb_questa] frame 4439 written (4440 total)
+# [tb_questa] frame 4469 written (4470 total)
+# [tb_questa] frame 4499 written (4500 total)
+# [tb_questa] frame 4529 written (4530 total)
+# [tb_questa] frame 4559 written (4560 total)
+# [tb_questa] frame 4589 written (4590 total)
+# [tb_questa] frame 4619 written (4620 total)
+# [tb_questa] frame 4649 written (4650 total)
+# [tb_questa] frame 4679 written (4680 total)
+# [tb_questa] frame 4709 written (4710 total)
+# [tb_questa] frame 4739 written (4740 total)
+# [tb_questa] frame 4769 written (4770 total)
+# Break key hit
+# Break at an unknown location
+# Control-C interrupt
+# 
+# MACRO ./run_questa.do PAUSED at line 43
+# 
+# <EOF>Break key hit
+# 
+# End time: 00:05:11 on Sep 19,2026, Elapsed time: 2:27:24
+# Errors: 0, Warnings: 4
