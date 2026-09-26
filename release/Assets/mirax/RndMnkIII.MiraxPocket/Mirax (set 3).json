@@ -1,0 +1,16 @@
+{
+    "instance": {
+        "magic": "APF_VER_1",
+        "variant_select": {
+            "id": 777,
+            "select": false
+        },
+        "data_slots": [
+            {
+                "id": 1,
+                "filename": "miraxb.rom",
+                "md5": "6fa90ed57b1b5f3390bd511d7c976ffb"
+            }
+        ]
+    }
+}

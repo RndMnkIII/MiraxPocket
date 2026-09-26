@@ -171,7 +171,6 @@
                 "enabled": true,
                 "persist": true,
                 "address": "0x20000008",
-                "mask": "0x01",
                 "defaultval": "0x00",
                 "options": [
                 {

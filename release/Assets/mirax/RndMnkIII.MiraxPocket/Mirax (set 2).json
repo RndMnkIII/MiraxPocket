@@ -1,0 +1,16 @@
+{
+    "instance": {
+        "magic": "APF_VER_1",
+        "variant_select": {
+            "id": 777,
+            "select": false
+        },
+        "data_slots": [
+            {
+                "id": 1,
+                "filename": "miraxa.rom",
+                "md5": "ca4026c6b65bc04d939546fa04512c9d"
+            }
+        ]
+    }
+}

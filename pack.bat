@@ -88,12 +88,29 @@ if not exist "%OUTDIR%\Platforms\%PLATFORM%.json"        echo AVISO: falta Platf
 if not exist "%OUTDIR%\Platforms\_images\%PLATFORM%.bin" echo AVISO: falta Platforms\_images\%PLATFORM%.bin en dist\
 
 REM ---- 7) Comprimir todo release\ -------------------------------------------
-REM ZipFile.CreateFromDirectory conserva las carpetas vacias (Compress-Archive no)
+REM Se usa el tar.exe de Windows (bsdtar/libarchive): guarda las rutas con "/"
+REM (ZipFile.CreateFromDirectory de .NET Framework las guarda con "\" y rompe
+REM el actualizador de openfpga-library y otras herramientas Linux/macOS) y
+REM conserva las carpetas vacias. Ruta explicita para no coger el GNU tar de
+REM Git for Windows, que no sabe crear .zip.
+set "TAR=%SystemRoot%\System32\tar.exe"
+if not exist "%TAR%" ( echo ERROR: no encuentro %TAR% ^(requiere Windows 10 1803 o posterior^) & exit /b 1 )
 set "ZIP=%ROOT%\%COREID%_%VERSION%.zip"
 if exist "%ZIP%" del /q "%ZIP%"
+REM Lista explicita del contenido de release\ para que las rutas del zip
+REM empiecen por Assets/, Cores/... (sin "./" delante)
+set "ITEMS="
+for /f "delims=" %%I in ('dir /b /a "%OUTDIR%"') do set ITEMS=!ITEMS! "%%I"
+pushd "%OUTDIR%"
+"%TAR%" -a -c -f "%ZIP%" !ITEMS!
+set "TARERR=!errorlevel!"
+popd
+if not "%TARERR%"=="0" ( echo ERROR: fallo al crear el ZIP & exit /b 1 )
+
+REM Verificacion: ninguna entrada del zip puede contener "\"
 powershell -NoProfile -ExecutionPolicy Bypass -Command ^
- "Add-Type -AssemblyName System.IO.Compression.FileSystem; [IO.Compression.ZipFile]::CreateFromDirectory('%OUTDIR%','%ZIP%',[IO.Compression.CompressionLevel]::Optimal,$false)"
-if errorlevel 1 ( echo ERROR: fallo al crear el ZIP & exit /b 1 )
+ "Add-Type -AssemblyName System.IO.Compression.FileSystem; $z=[IO.Compression.ZipFile]::OpenRead('%ZIP%'); $bad=@($z.Entries | Where-Object { $_.FullName.Contains('\') }); $z.Dispose(); if($bad.Count){ $bad | ForEach-Object { Write-Host ('  ' + $_.FullName) }; exit 1 }"
+if errorlevel 1 ( echo ERROR: el ZIP contiene rutas con "\" & exit /b 1 )
 
 echo -----------------------------------------------------------------
 echo OK. bitstream.rbf_r generado en:
