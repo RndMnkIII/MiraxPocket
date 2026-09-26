@@ -4,7 +4,7 @@
         "variables": [
                         {
                 "name": "Reset Core",
-                "id": 1,
+                "id": 15,
                 "type": "action",
                 "enabled": true,
                 "address": "0xF0000000",
@@ -162,6 +162,26 @@
                 "options": [
                     { "value": "0x00", "name": "Easy" },
                     { "value": "0x20", "name": "Hard" }
+                ]
+            },
+            {
+                "name": "Turbo (2x Main CPU)",
+                "id": 11,
+                "type": "list",
+                "enabled": true,
+                "persist": true,
+                "address": "0x20000008",
+                "mask": "0x01",
+                "defaultval": "0x00",
+                "options": [
+                {
+                    "value": "0x00",
+                    "name": "Off"
+                },
+                {
+                    "value": "0x01",
+                    "name": "On"
+                }
                 ]
             }
         ],

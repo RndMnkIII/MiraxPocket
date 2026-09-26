@@ -1,63 +1,39 @@
-//============================================================================
+// ============================================================================
+//  mirax_pocket.sv  -  Mirax core for Analogue Pocket (openFPGA)
+// ----------------------------------------------------------------------------
+// Author: RndMnkIII 
+// Ai assistant: Claude (ChatGPT-4)
+//    0x00000  prog (encrypted, data_code)   0xC000   -> mrom  AW=16
+//    0x0C000  audiocpu                       0x2000   -> mrom  AW=13
+//    0x0E000  tiles   (3 planes x 0x4000)    0xC000   -> mrom3 AW=14
+//    0x1A000  sprites (3 planes x 0x8000)    0x18000  -> mrom3 AW=15
+//    0x32000  color proms                    0x0040   -> mrom  AW=6
+//    ------------------------------------------------------------------
+//    total = 0x32040 (205,376 bytes)
+// ============================================================================
+
+//==============================================================================
 // SPDX-License-Identifier: GPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Javier (RndMnkIII)
 //
-// Project  : Mirax (Current Technology, 1985) - arcade core for Analogue Pocket
-// Module   : mirax_pocket.sv
-// Summary  : Mirax core for Analogue Pocket (openFPGA)
+// Project  : Mirax (Current Technology, 1985) — arcade core for Analogue Pocket
+// Module   : mirax_palette.sv
 // Board    : CURRENT CT805-3 (MAME set: miraxa)
-// Created  : see git history
+// Created  : 2026-09-26
 // Revised  : 2026-09-26
 //
 // This program is free software: you can redistribute it and/or modify it
 // under the terms of the GNU General Public License v3 or later. It is
 // distributed WITHOUT ANY WARRANTY. See LICENSE or
 // <https://www.gnu.org/licenses/gpl-3.0.html> for the full text.
-//----------------------------------------------------------------------------
-// EXPERIMENTAL CORE - AI-ASSISTED DEVELOPMENT
+//------------------------------------------------------------------------------
+// EXPERIMENTAL CORE — AI-ASSISTED DEVELOPMENT
 //
-// Human author : Javier (RndMnkIII)
-//   - Project direction, fidelity criteria and final decisions
-//   - PCB photography, measurements and verification on real hardware
-//   - Review, correction and acceptance of all RTL
-//
+// author : Javier (RndMnkIII)
 // AI assistant : Claude (Anthropic), model claude-opus-5-5
-//   - Registration of both PCB sides and trace following
-//   - Hardware hypotheses ([HYP:AI])
-//   - Draft RTL, helper scripts and documentation
-//
-// AI contributions are treated as hypotheses until verified on the board.
-// Tag conventions and hypothesis log: doc/hypotheses.md
-//----------------------------------------------------------------------------
-// HYPOTHESES
-//   Open:
-//     H-001 [HYP]     Every clock is an integer division of the 12 MHz crystal;
-//                     pixel clock = 12/2 = 6 MHz. Counter CLK net B9(74S161)<->B10
-//                     traced on the solder side; its source (via under B8) is not.
-//   Sources:
-//     [SRC:MAME] ROM set miraxa, single-slot .rom layout
-//     Analogue openFPGA APF conventions
-//----------------------------------------------------------------------------
-// Status: UNDER VALIDATION (platform wrapper) . Confidence: MEDIUM
-// Open hypotheses: H-001
-//============================================================================
-// DESCRIPTION
-//                      SINGLE-SLOT external ROM loading (offset-routed)
-//  ROMs are no longer baked in: they arrive as ONE contiguous blob through the
-//  download port (ioctl_*), exactly the layout the .mra produces:
-//
-//    0x00000  prog (encrypted, data_code)   0xC000   -> mrom  AW=16
-//    0x0C000  audiocpu                       0x2000   -> mrom  AW=13
-//    0x0E000  tiles   (3 planes x 0x4000)    0xC000   -> mrom3 AW=14
-//    0x1A000  sprites (3 planes x 0x8000)    0x18000  -> mrom3 AW=15
-//    0x32000  color proms                    0x0040   -> mrom  AW=6
-//    total = 0x32040 (205,376 bytes)
-//
-//  The program stays encrypted (mirax_decrypt descrambles on the bus). The core
-//  is held in reset while ioctl_download is high, so half-loaded ROMs never run.
-//
-//  Provide clk_sys = 48 MHz and clk_vid = 6 MHz from the APF PLL.
-//============================================================================
+//------------------------------------------------------------------------------
+// Status: UNDER VALIDATION · Confidence: MEDIUM · Open hypotheses: H-021, H-022
+//==============================================================================
 `default_nettype none
 
 module mirax_pocket
@@ -66,6 +42,7 @@ module mirax_pocket
     input  wire        clk_vid,       // 6 MHz   (APF pixel clock; sample domain)
     input  wire        reset,
     input  wire        pause,         // 1 = freeze CPU + audio (e.g. Pocket menu open)
+    input  wire        turbo,         // 1 = run MAIN Z80 at 6 MHz (2x); sound/AY stay 3 MHz
 
     // ---- single-slot ROM download (byte stream from core_top bridge) --------
     input  wire        ioctl_download, // high for the whole transfer
@@ -98,9 +75,10 @@ module mirax_pocket
     wire rst = reset | ioctl_download;
 
     // -------------------- clocks --------------------------------------------
-    wire ce_6m, ce_3m, ce_12m, ce_240, ce_3m180;
+    wire ce_6m, ce_6m180, ce_3m, ce_12m, ce_240, ce_3m180;
     mirax_clocks u_clk (.clk48(clk_sys), .rst(rst),
-        .ce_12m(ce_12m), .ce_6m(ce_6m), .ce_3m(ce_3m), .ce_3m180(ce_3m180), .ce_240hz(ce_240));
+        .ce_12m(ce_12m), .ce_6m(ce_6m), .ce_6m180(ce_6m180),
+        .ce_3m(ce_3m), .ce_3m180(ce_3m180), .ce_240hz(ce_240));
 
     // -------------------- clk_vid-aligned pixel enable ----------------------
     reg [2:0] vdsync;
@@ -123,8 +101,23 @@ module mirax_pocket
     always @(posedge clk_sys) pause_sr <= {pause_sr[1:0], pause};
     wire pause_g = pause_sr[2];
 
-    wire ce_3m_cpu    = ce_3m    & ~pause_g;   // main + sound Z80  (CEN_p)
-    wire ce_3m180_cpu = ce_3m180 & ~pause_g;   // main + sound Z80  (CEN_n)
+    // Synchronize turbo into this domain.
+    reg [2:0] turbo_sr;
+    always @(posedge clk_sys) turbo_sr <= {turbo_sr[1:0], turbo};
+    wire turbo_g = turbo_sr[2];
+
+    // ------------------------------------------------------------------------
+    //  TURBO  -  run ONLY the main Z80 at 6 MHz (2x) by muxing its clock-enable
+    //  pair to the 6 MHz phases. Sound Z80 and both AY-3-8912 stay at 3 MHz, so
+    //  audio pitch/tempo is unchanged. The video is vblank-paced, so this does
+    //  not change frame rate; it gives the main CPU 2x the cycles per frame,
+    //  which mainly REDUCES the game's slowdown in busy scenes. Both phases are
+    //  muxed together so T80pa always sees a consistent CEN_p/CEN_n pair.
+    // ------------------------------------------------------------------------
+    wire ce_main      = (turbo_g ? ce_6m    : ce_3m)    & ~pause_g;  // main Z80 CEN_p
+    wire ce_main180   = (turbo_g ? ce_6m180 : ce_3m180) & ~pause_g;  // main Z80 CEN_n
+    wire ce_3m_cpu    = ce_3m    & ~pause_g;   // sound Z80  (CEN_p)
+    wire ce_3m180_cpu = ce_3m180 & ~pause_g;   // sound Z80  (CEN_n)
     wire ce_ay        = ce_3m    & ~pause_g;   // both AY-3-8912 (jt49 clk_en)
 
     // ========================================================================
@@ -205,7 +198,7 @@ module mirax_pocket
     wire flip_x, flip_y, coin1, coin2, vblank_rise;
     wire [7:0] sound_cmd; wire sound_cmd_wr;
     mirax_main u_main (
-        .clk(clk_sys), .cen(ce_3m_cpu), .cen_3m180(ce_3m180_cpu), .rst(rst), .vblank_rise(vblank_rise),
+        .clk(clk_sys), .cen(ce_main), .cen_3m180(ce_main180), .rst(rst), .vblank_rise(vblank_rise),
         .prog_addr(prog_addr), .prog_data(prog_data),
         .vram_cs(vram_cs), .spr_cs(spr_cs), .cram_cs(cram_cs),
         .mem_addr(mem_addr), .cpu_dout(cpu_dout),

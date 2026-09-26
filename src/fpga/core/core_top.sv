@@ -3,7 +3,6 @@
 //
 // Instantiated by the real top-level: apf_top
 //
-
 `default_nettype none
 
 module core_top (
@@ -311,6 +310,9 @@ always @(*) begin
     32'h20000004: begin
         bridge_rd_data <= int_bridge_rd_data;
     end
+    32'h20000008: begin
+        bridge_rd_data <= int_bridge_rd_data;
+    end
     {ADDRESS_ANALOGIZER_CONFIG,24'h0}: begin
         bridge_rd_data <= analogizer_bridge_rd_data;
     end // Analogizer
@@ -351,6 +353,7 @@ reg [5:0] dsw_1   = 6'h00;   // interact.json defaults (all 0x00)
 reg [5:0] dsw_2   = 6'h0C;   // interact.json defaults: Demo Sounds On (0x04) + Allow Continue Yes (0x08)
 reg [5:0] dsw_1_d = 6'h00;   // delayed copies, for change detection
 reg [5:0] dsw_2_d = 6'h0C;
+reg       turbo_r = 1'b0;    // 0x20000008 bit0: main-CPU 2x turbo (live, no reset)
 
     always_ff @(posedge clk_74a) begin
         // interact.json is NOT writeonly (so the Pocket can read the DIP back
@@ -361,8 +364,9 @@ reg [5:0] dsw_2_d = 6'h0C;
         // identical re-write (that would hold the core in a permanent reset).
         if(bridge_wr) begin
             case(bridge_addr)
-                32'h20000000: dsw_1 <= bridge_wr_data[5:0];
-                32'h20000004: dsw_2 <= bridge_wr_data[5:0];
+                32'h20000000: dsw_1   <= bridge_wr_data[5:0];
+                32'h20000004: dsw_2   <= bridge_wr_data[5:0];
+                32'h20000008: turbo_r <= bridge_wr_data[0]; // turbo toggles live (no reset)
             endcase
         end
 
@@ -380,6 +384,7 @@ reg [5:0] dsw_2_d = 6'h0C;
                 32'hF0000000: begin int_bridge_rd_data <= core_reset_r;      end
                 32'h20000000: begin int_bridge_rd_data <= {26'h0, dsw_1s};   end
                 32'h20000004: begin int_bridge_rd_data <= {26'h0, dsw_2s};   end
+                32'h20000008: begin int_bridge_rd_data <= {31'h0, turbo_r};  end
                 // El Analogizer NO se rutea aqui: bridge_rd_data lo conduce el
                 // bloque combinacional de arriba (evita el doble-driver 10028).
             endcase
@@ -395,6 +400,9 @@ wire core_reset_s;
 synch_3 #(.WIDTH(6)) s_dsw1 (dsw_reg1, dsw_1s, clk_sys48);
 synch_3 #(.WIDTH(6)) s_dsw2 (dsw_reg2, dsw_2s, clk_sys48);
 synch_3 #(.WIDTH(1)) s_reset (core_reset_n, core_reset_s, clk_sys48);
+
+wire turbo_s;
+synch_3 #(.WIDTH(1)) s_turbo (turbo_r, turbo_s, clk_sys48);
 
 // Pause when the Pocket OSD/menu is open (osnotify_inmenu), synchronized into
 // the 48 MHz core domain. Freezes CPU + audio; video keeps scanning the frozen
@@ -708,6 +716,7 @@ mirax_pocket u_mirax (
     .clk_vid   (clk_vid),          // 6 MHz from APF PLL (pixel clock / sample domain)
     .reset     (core_rst),
     .pause     (pause_core),       // Pocket menu open OR keyboard PAUSE toggle
+    .turbo     (turbo_s),          // 1 = main Z80 2x (from interact 0x20000008)
 
     // carga externa de ROM (single-slot, offset-routed)
     .ioctl_download (ioctl_download),
@@ -912,10 +921,28 @@ mirax_pocket u_mirax (
         clk_74a
     );
 
-    // Y/C encoder calculado para i_clk = 48.000 MHz (solo relevante en modos Y/C)
-    wire [39:0] CHROMA_PHASE_INC = 40'd655958558275;      // NTSC @ 48 MHz
-    wire [26:0] COLORBURST_RANGE = {7'd6, 10'd21, 10'd19};
-    wire        PALFLAG = 1'b0;
+    wire [39:0] CHROMA_PHASE_INC;
+    wire [26:0] COLORBURST_RANGE;
+    wire PALFLAG;
+
+    parameter NTSC_REF = 3.579545;   
+    parameter PAL_REF = 4.43361875;
+
+    // Parameters to be modifed
+    parameter CLK_VIDEO_NTSC = 48.0; // Must be filled E.g XX.X Hz - CLK_VIDEO
+    parameter CLK_VIDEO_PAL  = 48.0; // Must be filled E.g XX.X Hz - CLK_VIDEO
+
+    //PAL CLOCK FREQUENCY SHOULD BE 42.56274
+    localparam [39:0] NTSC_PHASE_INC1 = 40'd81994819784; // ((NTSC_REF * 2^40) / CLK_VIDEO_NTSC)
+    localparam [39:0] PAL_PHASE_INC1  = 40'd101558653516; // ((PAL_REF * 2^40) / CLK_VIDEO_PAL)
+  
+	localparam [6:0] COLORBURST_START1 = (3.7 * (CLK_VIDEO_NTSC/NTSC_REF));
+	localparam [9:0] COLORBURST_NTSC_END1 = (9 * (CLK_VIDEO_NTSC/NTSC_REF)) + COLORBURST_START1;
+	localparam [9:0] COLORBURST_PAL_END1 = (10 * (CLK_VIDEO_PAL/PAL_REF)) + COLORBURST_START1;
+
+    assign PALFLAG = (analogizer_video_type == 4'h4); 
+    assign CHROMA_PHASE_INC = PALFLAG ? PAL_PHASE_INC1 : NTSC_PHASE_INC1; 
+    assign COLORBURST_RANGE = {COLORBURST_START1, COLORBURST_NTSC_END1, COLORBURST_PAL_END1};
 
     wire [31:0] analogizer_bridge_rd_data;
 

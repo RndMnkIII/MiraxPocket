@@ -7,8 +7,8 @@
             "description": "Mirax Arcade core for the Pocket",
             "author": "RndMnkIII",
             "url": "https://github.com/RndMnkIII",
-            "version": "0.1",
-            "date_release": "2026-09-23"
+            "version": "0.2",
+            "date_release": "2026-09-26"
         },
         "framework": {
             "target_product": "Analogue Pocket",

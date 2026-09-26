@@ -61,11 +61,11 @@ module mirax_clocks
     input  wire rst,
     output reg  ce_12m,
     output reg  ce_6m,     // pixel
+    output reg  ce_6m180,  // 6 MHz, 180 deg phase (turbo CPU CEN_n)
     output reg  ce_3m,     // cpu / ay
     output reg  ce_3m180,  // cpu / ay (180 deg phase)
     output reg  ce_240hz   // sound periodic irq tick (4*60)
 );
-    // [HYP H-001] 6 MHz pixel = 12/2 ; [HYP H-002] AY = 12/4  [VERIFY]
     reg [3:0] div;
     always @(posedge clk48) begin
         if (rst) begin div<=0; ce_12m<=0; ce_6m<=0; ce_3m<=0; end
@@ -73,11 +73,12 @@ module mirax_clocks
             div <= div + 4'd1;
             ce_12m <= (div[1:0]==2'b00);       // 48/4
             ce_6m  <= (div[2:0]==3'b000);      // 48/8
+            ce_6m180 <= (div[2:0]==3'b100);    // 48/8, 180 deg phase (turbo CEN_n)
             ce_3m  <= (div[3:0]==4'b0000);     // 48/16
             ce_3m180 <= (div[3:0]==4'b1000);     // 48/16, 180 deg phase
         end
     end
-
+ 
     // 240 Hz tick: divide 48 MHz by 200000
     reg [17:0] t;
     always @(posedge clk48) begin
@@ -89,5 +90,3 @@ module mirax_clocks
         end
     end
 endmodule
-
-`default_nettype wire
