@@ -232,7 +232,7 @@ As an example of the analysis process, the colour DAC was reconstructed by flipp
 - **Jose Tejada ([jotego](https://github.com/jotego))** — [jt49](https://github.com/jotego/jt49), the AY-3-8910/8912 sound core.
 - **Daniel Wallner** — the **T80** Z80 core (T80pa variant), with later fixes by MikeJ, Sorgelig and other contributors.
 - **Adam Gastineau ([agg23](https://github.com/agg23))** — openFPGA tools and documentation, the `data_loader` module, and the platform image tools.
-- **The MAME team** — the `misc/mirax.cpp` driver, used as the reference oracle.
+- **The MAME team** — the `misc/mirax.cpp` driver, used as the initial reference.
 - **[sebdel](https://github.com/sebdel/mra-tools-c)** — mra-tool.
 - **Analogue** — the openFPGA platform.
 - AI-assisted analysis and documentation by **Claude (Anthropic)**; see [section 2](#2-experimental-status-and-accuracy).
